@@ -1,0 +1,81 @@
+/*TASK 2:PREDICTIVE MODELING WITH LINEAR REGRESSION*/
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Load the dataset
+data = pd.read_csv('path/to/your/boston.csv')
+
+# Display the first few rows of the dataset
+print(data.head())
+
+# Exploratory Data Analysis (EDA)
+# Summary statistics
+print(data.describe())
+
+# Correlation matrix
+plt.figure(figsize=(12, 8))
+sns.heatmap(data.corr(), annot=True, cmap='coolwarm')
+plt.title('Correlation Matrix')
+plt.show()
+
+# Distribution of the target variable 'MEDV'
+plt.figure(figsize=(8, 6))
+sns.histplot(data['MEDV'], kde=True, bins=30)
+plt.title('Distribution of MEDV')
+plt.xlabel('MEDV')
+plt.ylabel('Frequency')
+plt.show()
+
+# Scatter plot between 'LSTAT' and 'MEDV'
+plt.figure(figsize=(8, 6))
+sns.scatterplot(x='LSTAT', y='MEDV', data=data)
+plt.title('LSTAT vs. MEDV')
+plt.xlabel('LSTAT')
+plt.ylabel('MEDV')
+plt.show()
+
+# Select features and target variable
+# For simplicity, let's use 'LSTAT' as the feature and 'MEDV' as the target
+X = data[['LSTAT']]
+y = data['MEDV']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the linear regression model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+print(f'Mean Squared Error: {mse}')
+print(f'R-squared: {r2}')
+
+# Visualize the regression line and actual vs. predicted values
+plt.figure(figsize=(10, 6))
+plt.scatter(X_test, y_test, alpha=0.7, label='Actual')
+plt.scatter(X_test, y_pred, alpha=0.7, label='Predicted', color='red')
+plt.plot(X_test, y_pred, color='blue', linewidth=2)
+plt.xlabel('LSTAT')
+plt.ylabel('MEDV')
+plt.title('Actual vs. Predicted Values')
+plt.legend()
+plt.show()
+
+# Plot the residuals
+residuals = y_test - y_pred
+plt.figure(figsize=(10, 6))
+sns.histplot(residuals, kde=True)
+plt.xlabel('Residuals')
+plt.title('Distribution of Residuals')
+plt.show()
